@@ -7,12 +7,11 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class NettyTimeClientHandler extends ChannelHandlerAdapter {
 
-	private final ByteBuf waitSendMessage;
+	private final byte[] requestBody;
 
 	public NettyTimeClientHandler() {
-		byte[] requestBody = "GET TIME".getBytes();
-		waitSendMessage = Unpooled.buffer(requestBody.length);
-		waitSendMessage.writeBytes(requestBody);
+		requestBody = ("GET TIME" + System.getProperty("line.separator")).getBytes();
+
 	}
 
 	/**
@@ -21,7 +20,11 @@ public class NettyTimeClientHandler extends ChannelHandlerAdapter {
 	@Override
 	public void channelActive(ChannelHandlerContext channelHandlerContext) throws Exception {
 		System.out.println("channel Active");
-		channelHandlerContext.writeAndFlush(waitSendMessage);
+		for (int i = 0; i < 100; i++) {
+			ByteBuf waitSendMessage = Unpooled.buffer(requestBody.length);
+			waitSendMessage.writeBytes(requestBody);
+			channelHandlerContext.writeAndFlush(waitSendMessage);
+		}
 	}
 
 	/**

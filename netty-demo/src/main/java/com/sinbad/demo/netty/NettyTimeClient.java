@@ -8,6 +8,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.LineBasedFrameDecoder;
+import io.netty.handler.codec.string.StringDecoder;
 
 public class NettyTimeClient {
 
@@ -28,12 +30,14 @@ public class NettyTimeClient {
 					.option(ChannelOption.TCP_NODELAY, true)
 					.handler(new ChannelInitializer<SocketChannel>() {
 						protected void initChannel(SocketChannel socketChannel) throws Exception {
+							socketChannel.pipeline().addLast(new LineBasedFrameDecoder(SOCKET_BLOCK_LOG));
+							socketChannel.pipeline().addLast(new StringDecoder());
 							socketChannel.pipeline().addLast(new NettyTimeClientHandler());
 						}
 					});
 
+			//发起异步链接
 			ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
-
 			System.out.println("finished connect wait do working ");
 
 			//等待客户端链路关闭
@@ -43,6 +47,19 @@ public class NettyTimeClient {
 
 		} finally {
 			eventLoopGroup.shutdownGracefully();
+		}
+	}
+
+
+	private static class WorkerChannelHandler extends ChannelInitializer<SocketChannel> {
+
+		protected void initChannel(SocketChannel socketChannel) throws Exception {
+
+			//
+			socketChannel.pipeline().addLast(new LineBasedFrameDecoder(SOCKET_BLOCK_LOG));
+			socketChannel.pipeline().addLast(new StringDecoder());
+			socketChannel.pipeline().addLast(new NettyTimeClientHandler());
+
 		}
 	}
 

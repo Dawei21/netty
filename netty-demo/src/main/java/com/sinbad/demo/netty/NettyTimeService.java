@@ -8,6 +8,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LineBasedFrameDecoder;
+import io.netty.handler.codec.string.StringDecoder;
 
 /**
  * 时间服务器 服务端
@@ -37,8 +39,8 @@ public class NettyTimeService {
 	 */
 	public void startOpenService(int port) throws Exception {
 		// 配置服务端的NIO线程组
-		//bossGroup: 用作接受客户端请求的线程组 （acceptor）
-		//workerGroup: 用作服务器处理业务I/O的线程组 （client）
+		// bossGroup: 用作接受客户端请求的线程组 （acceptor）
+		// workerGroup: 用作服务器处理业务I/O的线程组 （client）
 		EventLoopGroup bossGroup = new NioEventLoopGroup();
 		EventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -47,11 +49,7 @@ public class NettyTimeService {
 
 			serverBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
 					.option(ChannelOption.SO_BACKLOG, SOCKET_BLOCK_LOG)
-					.childHandler(new ChannelInitializer<SocketChannel>() {
-						protected void initChannel(SocketChannel socketChannel) throws Exception {
-							socketChannel.pipeline().addLast(new NettyTimeServiceHandler());
-						}
-					});
+					.childHandler(new ChildChannelHandler());
 			// Channel绑定端口
 			ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
 
@@ -67,6 +65,18 @@ public class NettyTimeService {
 			workerGroup.shutdownGracefully();
 		}
 
+	}
+
+	private static class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
+
+		protected void initChannel(SocketChannel socketChannel) throws Exception {
+
+			//
+			socketChannel.pipeline().addLast(new LineBasedFrameDecoder(SOCKET_BLOCK_LOG));
+			socketChannel.pipeline().addLast(new StringDecoder());
+			socketChannel.pipeline().addLast(new NettyTimeServiceHandler());
+
+		}
 	}
 
 }

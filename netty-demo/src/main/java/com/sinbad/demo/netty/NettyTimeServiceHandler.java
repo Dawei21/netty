@@ -30,6 +30,7 @@ public class NettyTimeServiceHandler extends ChannelHandlerAdapter {
 		if ("GET TIME".equalsIgnoreCase(body)) {
 			responseBody = new Date().toString();
 		}
+		responseBody = responseBody + System.getProperty("line.separator");
 
 		ByteBuf responseBuf = Unpooled.copiedBuffer(responseBody.getBytes());
 		channelHandlerContext.write(responseBuf);
