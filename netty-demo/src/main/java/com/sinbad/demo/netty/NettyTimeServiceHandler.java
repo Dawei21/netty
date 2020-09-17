@@ -15,34 +15,36 @@ public class NettyTimeServiceHandler extends ChannelHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext channelHandlerContext, Object msg)
 			throws Exception {
-		ByteBuf byteBuf = (ByteBuf) msg;
+		String message = (String) msg;
+		System.out.println("Get order : " + message);
+//		ByteBuf byteBuf = (ByteBuf) msg;
+//
+//		int readableBytes = byteBuf.readableBytes();
+//		byte[] requestBuf = new byte[readableBytes];
+//
+//		byteBuf.readBytes(requestBuf);
+//
+//		String body = new String(requestBuf, "UTF-8");
 
-		int readableBytes = byteBuf.readableBytes();
-		byte[] requestBuf = new byte[readableBytes];
-
-		byteBuf.readBytes(requestBuf);
-
-		String body = new String(requestBuf, "UTF-8");
-
-		System.out.println("Get order : " + body);
-
+//		System.out.println("Get order : " + body);
+//
 		String responseBody = "Bad Request";
-		if ("GET TIME".equalsIgnoreCase(body)) {
+		if ("GET TIME".equalsIgnoreCase(message)) {
 			responseBody = new Date().toString();
 		}
 		responseBody = responseBody + System.getProperty("line.separator");
 
 		ByteBuf responseBuf = Unpooled.copiedBuffer(responseBody.getBytes());
-		channelHandlerContext.write(responseBuf);
+		channelHandlerContext.writeAndFlush(responseBuf);
 	}
 
-	/**
-	 * 处理完成 就返回
-	 */
-	@Override
-	public void channelReadComplete(ChannelHandlerContext channelHandlerContext) throws Exception {
-		channelHandlerContext.flush();
-	}
+//	/**
+//	 * 处理完成 就返回
+//	 */
+//	@Override
+//	public void channelReadComplete(ChannelHandlerContext channelHandlerContext) throws Exception {
+//		channelHandlerContext.flush();
+//	}
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext channelHandlerContext, Throwable cause)

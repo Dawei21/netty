@@ -33,12 +33,13 @@ public class NettyTimeClientHandler extends ChannelHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext channelHandlerContext, Object msg)
 			throws Exception {
-		ByteBuf responseBuf = (ByteBuf) msg;
-		int readableBytes = responseBuf.readableBytes();
-		byte[] responseByte = new byte[readableBytes];
-		responseBuf.readBytes(responseByte);
-
-		String responseBody = new String(responseByte, "UTF-8");
+//		ByteBuf responseBuf = (ByteBuf) msg;
+//		int readableBytes = responseBuf.readableBytes();
+//		byte[] responseByte = new byte[readableBytes];
+//		responseBuf.readBytes(responseByte);
+//
+//		String responseBody = new String(responseByte, "UTF-8");
+		String responseBody = (String) msg;
 		System.out.println("Get time is : " + responseBody);
 
 	}
