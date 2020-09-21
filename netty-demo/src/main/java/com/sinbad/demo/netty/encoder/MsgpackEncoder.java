@@ -14,6 +14,7 @@ public class MsgpackEncoder extends MessageToByteEncoder<Object> {
 
 		//进行数据的序列化
 		MessagePack messagePack = new MessagePack();
+		//msgpack.register(User.class);//与 @Message注解用其一即可
 		byte[] writeByte = messagePack.write(object);
 
 		byteBuf.writeBytes(writeByte);

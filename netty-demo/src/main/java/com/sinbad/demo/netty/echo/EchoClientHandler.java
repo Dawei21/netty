@@ -26,7 +26,7 @@ public class EchoClientHandler extends ChannelHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext channelHandlerContext, Object msg) throws Exception {
 
-		System.out.println("client review msg: " + msg);
+		System.out.println("client review msg: " + msg.toString());
 		//channelHandlerContext.write(msg);
 //		String reviewMsg = (String) msg;
 //		System.out.println(reviewMsg);

@@ -24,6 +24,7 @@ public class MsgpackDecoder extends MessageToMessageDecoder<ByteBuf> {
 
 		MessagePack messagePack = new MessagePack();
 
+		//msgpack.register(User.class);//与 @Message注解用其一即可
 		//反序列化数据
 		Value read = messagePack.read(messageAry);
 		//存储反序列化的数据内容
